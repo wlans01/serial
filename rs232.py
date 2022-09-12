@@ -25,6 +25,11 @@ class RS_232:
     def read(self):
         return self.ser.readlines().decode("ascii")
 
+    def close(self):
+        self.ser.close()
+
 
 if __name__ == '__main__':
     rs = RS_232(port="COM8", baudrate=19200)
+    rs.run("SP")
+    rs.close()
