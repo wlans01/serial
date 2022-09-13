@@ -23,13 +23,15 @@ class RS_232:
         self.ser.write(com)
 
     def read(self):
-        return self.ser.readlines().decode("ascii")
+        res = self.ser.readline().decode("ascii")
+        print(res)
+        return res
 
     def close(self):
         self.ser.close()
 
 
 if __name__ == '__main__':
-    rs = RS_232(port="COM8", baudrate=19200)
+    rs = RS_232(port="COM3", baudrate=19200)
     rs.run("SP")
     rs.close()
