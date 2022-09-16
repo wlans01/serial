@@ -23,15 +23,20 @@ class RS_232:
         self.ser.write(com)
 
     def read(self):
-        res = self.ser.readline().decode("ascii")
+        res = self.ser.readline().decode("ascii").lstrip("*")
         print(res)
         return res
+
+    def setWaveLength(self, waveLength: int):
+        com = f"$WL {waveLength}".encode("ascii")
+        self.ser.write(com)
 
     def close(self):
         self.ser.close()
 
 
 if __name__ == '__main__':
-    rs = RS_232(port="COM3", baudrate=19200)
+    rs = RS_232(port="COM10", baudrate=19200)
+    rs.setWaveLength(650)
     rs.run("SP")
     rs.close()
