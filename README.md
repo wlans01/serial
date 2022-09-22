@@ -12,4 +12,4 @@ NewPort를 연결하여 데이터를 얻기
 ```
 $ pip install -r requirements.txt
 ```
-### mesure.py 실행
+### measure.py 실행
