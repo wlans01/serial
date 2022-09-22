@@ -40,7 +40,7 @@ def main():
 
     df = pd.DataFrame({'Position':Positin,'Power': Power})
     print(df)
-    df.to_csv('result.csv', index=False)
+    df.to_csv('\\result\\result.csv', index=False)
 
 
 
