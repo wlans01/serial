@@ -8,7 +8,8 @@ NewPort를 연결하여 데이터를 얻기
 - PRM1Z8
 - 918D-SL-OD3R
 
-### 시작하기
+## 시작하기
 ```
 $ pip install -r requirements.txt
 ```
+### mesure.py 실행
