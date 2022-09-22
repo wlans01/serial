@@ -1,6 +1,6 @@
 # Python Automation of a Power Meter and Rotation Mount 
-서브모터를 python을 이용하여 제어해 Rotatin Mount를 자동으로 돌려 레이저빔의 pol특성을 확인
-NewPort를 연결하여 데이터를 얻기
+서브모터를 python을 이용하여 제어해 Rotatin Mount를 자동으로 돌려 레이저빔의 pol특성을 확인위해 작성  
+NewPort 1919R를 연결하여 데이터를 얻기
 
 ## Device
 - KDC101
