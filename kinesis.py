@@ -50,7 +50,7 @@ def main():
         config.UpdateCurrentConfiguration()
         controller.SetSettings(controller.MotorDeviceSettings, True, False)
 
-        print('Homing Moter')
+        print('Homing Moter...')
         controller.Home(60000)
 
         jog_params = controller.GetJogParams()
@@ -59,7 +59,7 @@ def main():
 
         controller.SetJogParams(jog_params)
 
-        print('Moving Motor')
+        print('Moving Motor...')
         # controller.MoveJog(MotorDirection.Forward, 60000)
         controller.MoveTo(Decimal(180),0)
         print(controller.Position)
@@ -97,8 +97,7 @@ class KDC:
             config.UpdateCurrentConfiguration()
             controller.SetSettings(controller.MotorDeviceSettings, True, False)
 
-            print('Homing Moter')
-            controller.Home(60000)
+            
 
         return controller
 
@@ -115,6 +114,7 @@ class KDC:
         print(f'Min Velocity : {self.controller.GetVelocityParams().MinVelocity}')
 
     def goHome(self,time_out :int = 60000):
+        print('Homing Moter...')
         self.controller.Home(time_out)
 
     def move(self,pos, time_out :int = 60000):
