@@ -60,7 +60,7 @@ def main(num :int =1,file_name :str ='file_name'):
     newport.close()
     end = time.time()
     print('Measure End')
-    print(f'Time : {end - start}sec')
+    print(f'Time : {end - start} sec')
     print('Device close')
     
 
