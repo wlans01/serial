@@ -83,7 +83,7 @@ class KDC:
             controller.Connect(serial_num)
 
             if not controller.IsSettingsInitialized():
-                print('Initializing Moter')
+                print('Initializing Moter...')
                 controller.WaitForSettingsInitialized(3000)
 
             controller.StartPolling(50)

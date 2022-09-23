@@ -7,14 +7,14 @@ import os
 
 
 def createFolder(abspath: str,folder_path : str ='result\\'):
-    path =folder_path+folder_path
+    path =abspath+folder_path
     try:
         if not os.path.exists(path):
             os.makedirs(path)
     except OSError:
         print(OSError)
 
-def main(num :int =1):
+def main(num :int =1,file_name :str ='file_name'):
     #NewPort Settings-------------
     print('NewPort Settings...')
     newport = RS_232(port="COM10", baudrate=19200)
@@ -32,7 +32,8 @@ def main(num :int =1):
 
     # Measure-----------------------------
     print('Measure Start')
-    createFolder(abspath,'result\\650')
+    start = time.time()
+    createFolder(abspath,f'result\\{file_name}')
     for i in range(num):
         kdc.goHome()
         time.sleep(.25)
@@ -50,17 +51,19 @@ def main(num :int =1):
             Positin.append(pos)
             Power.append(power)        
             time.sleep(.1)
-        print('Measure End')
-        
-        print('Device close')
+       
 
         df = pd.DataFrame({'Position':Positin,'Power': Power})
-        print(df)
-        df.to_csv(f'\\result\\650\\result{str(i+1).zfill(2)}.csv', index=False)
+        df.to_csv(f'\\result\\{file_name}\\{file_name}_result{str(i+1).zfill(len(str(num)))}.csv', index=False)
 
     kdc.close()
     newport.close()
+    end = time.time()
+    print('Measure End')
+    print(f'Time : {end - start}sec')
+    print('Device close')
+    
 
 if __name__ == "__main__":
     abspath = os.path.dirname(os.path.abspath(__file__))
-    main(num=15)
+    main(num=15,file_name='650nm')
