@@ -21,7 +21,7 @@ def main(num :int =1,file_name :str ='file_name'):
     newport.write('WN 2')
     newport.read()
     time.sleep(.25)
-    newport.write('WL 650')
+    newport.write('WL 1064')
     newport.read()
     time.sleep(.25)
 
@@ -33,7 +33,7 @@ def main(num :int =1,file_name :str ='file_name'):
     # Measure-----------------------------
     print('Measure Start')
     start = time.time()
-    createFolder(abspath,f'result\\{file_name}')
+    createFolder(abspath,f'\\result\\{file_name}')
     for i in range(num):
         kdc.goHome()
         time.sleep(.25)
@@ -54,7 +54,7 @@ def main(num :int =1,file_name :str ='file_name'):
        
 
         df = pd.DataFrame({'Position':Positin,'Power': Power})
-        df.to_csv(f'\\result\\{file_name}\\{file_name}_result{str(i+1).zfill(len(str(num)))}.csv', index=False)
+        df.to_csv(abspath+f'\\result\\{file_name}\\{file_name}_result{str(i+1).zfill(2)}.csv', index=False)
 
     kdc.close()
     newport.close()
@@ -66,4 +66,4 @@ def main(num :int =1,file_name :str ='file_name'):
 
 if __name__ == "__main__":
     abspath = os.path.dirname(os.path.abspath(__file__))
-    main(num=15,file_name='650nm')
+    main(num=15,file_name='1064nm')
