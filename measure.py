@@ -6,7 +6,7 @@ import os
 
 
 
-def createFolder(abspath: str,folder_path : str ='result\\'):
+def createFolder(abspath: str,folder_path : str ='result\\') -> None:
     path =abspath+folder_path
     try:
         if not os.path.exists(path):
@@ -14,47 +14,90 @@ def createFolder(abspath: str,folder_path : str ='result\\'):
     except OSError:
         print(OSError)
 
-def main(num :int =1,file_name :str ='file_name'):
-    #NewPort Settings-------------
+def newPortSettings(newport : RS_232, wL :str) -> None:
+    '''
+    NewPort Settings
+
+    Parameters:
+        newport : RS_232 => RS_232 instance
+        wL : str => waveLength
+
+    Returns:
+        None
+    '''
     print('NewPort Settings...')
+    
+    # newport 측적 범위
+    ar = [30,3,300e-3,30e-3,300e-6,30e-6] 
+    wn = -1
+
+    # 측정 파장 설정
+    newport.write(f'WL {wL}')
+    newport.read()
+    time.sleep(.25)
+
+    # 측정 범위 Auto 변경
+    newport.write(f'WN {wn}')
+    newport.read()
+    time.sleep(2)
+
+    # 측정값으로 측정 범위 설정하기
+    newport.write(command="SP")
+    power =float(newport.read().lstrip('*'))
+
+    for i,e in enumerate(ar):
+        if power < e:
+            wn =i
+    time.sleep(.25)
+    
+    newport.write(f'WN {wn}')
+    newport.read()
+    time.sleep(.25)
+
+def main(wL :str ,A : str,num :int =1)-> None:
+    '''
+    Measure Laser Polarization
+
+    Parameters:
+        wL : str => waveLength
+        A : str => Laser Power (Supply Power)
+        num : int = 1 => Number of Measurements
+    
+    Returns:
+        None
+    '''
+    #NewPort Settings-------------
     newport = RS_232(port="COM10", baudrate=19200)
-    newport.write('WN 2')
-    newport.read()
-    time.sleep(.25)
-    newport.write('WL 1064')
-    newport.read()
-    time.sleep(.25)
+    newPortSettings(newport=newport,wL=wL)
 
     #KDC Settings-------------------------
     kdc = KDC(serial_num='27257082')
     kdc.setController(step_size=360)   
     
-
     # Measure-----------------------------
     print('Measure Start')
     start = time.time()
-    createFolder(abspath,f'\\result\\{file_name}')
+    createFolder(abspath,f'\\result\\{wL}nm\\{A}')
     for i in range(num):
         kdc.goHome()
         time.sleep(.25)
 
         kdc.moveForward(time_out=0)
         time.sleep(.25)
-
-        Positin =[]
-        Power = []
+        
+        Theta  =['theta','']
+        Power = ["W",A]
         while kdc.isControllerBusy():
             newport.write(command="SP")
             power =float(newport.read().lstrip('*'))
             pos = kdc.position()
             print(f'Moter Position : {pos} , Power : {power}')
-            Positin.append(pos)
+            Theta.append(pos)
             Power.append(power)        
             time.sleep(.1)
        
-
-        df = pd.DataFrame({'Position':Positin,'Power': Power})
-        df.to_csv(abspath+f'\\result\\{file_name}\\{file_name}_result{str(i+1).zfill(2)}.csv', index=False)
+        df = pd.DataFrame({'Theta':Theta,'Power': Power})
+        df.to_csv(abspath+f'\\result\\{wL}nm\\{A}\\{wL}_{A}_{str(i+1).zfill(3)}.csv', index=False,header=True)
 
     kdc.close()
     newport.close()
@@ -63,7 +106,6 @@ def main(num :int =1,file_name :str ='file_name'):
     print(f'Time : {end - start} sec')
     print('Device close')
     
-
 if __name__ == "__main__":
     abspath = os.path.dirname(os.path.abspath(__file__))
-    main(num=15,file_name='1064nm')
+    main(wL='1064',A='50mA',num=10)
