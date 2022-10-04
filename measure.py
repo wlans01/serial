@@ -108,4 +108,4 @@ def main(wL :str ,A : str,num :int =1)-> None:
     
 if __name__ == "__main__":
     abspath = os.path.dirname(os.path.abspath(__file__))
-    main(wL='1064',A='50mA',num=10)
+    main(wL='1064',A='50mA',num=1)
