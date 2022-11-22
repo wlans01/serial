@@ -1,8 +1,10 @@
 """An example that uses the .NET Kinesis Libraries to connect to a KDC."""
+
 import os
 import time
 import clr
 import datetime
+
 clr.AddReference(
     "C:\\Program Files\\Thorlabs\\Kinesis\\Thorlabs.MotionControl.DeviceManagerCLI.dll")
 clr.AddReference(
@@ -16,16 +18,20 @@ from Thorlabs.MotionControl.GenericMotorCLI.ControlParameters import JogParamete
 from Thorlabs.MotionControl.DeviceManagerCLI import *
 from System import Decimal
 
+
+
+
 def getDeviceList():
     DeviceManagerCLI.BuildDeviceList()
     return DeviceManagerCLI.GetDeviceList()
 
-class KDC:
-    def __init__(self,serial_num: str,device_settings_name:str ='PRM1-Z8'):
-        DeviceManagerCLI.BuildDeviceList()
-        self.controller = self.connectDevice(serial_num,device_settings_name)
 
-    def connectDevice(self, serial_num,device_settings_name):
+class KDC:
+    def __init__(self, serial_num: str, device_settings_name: str = 'PRM1-Z8'):
+        DeviceManagerCLI.BuildDeviceList()
+        self.controller = self.connectDevice(serial_num, device_settings_name)
+
+    def connectDevice(self, serial_num, device_settings_name):
         controller = KCubeDCServo.CreateKCubeDCServo(serial_num)
 
         if not controller == None:
@@ -41,55 +47,50 @@ class KDC:
             time.sleep(.1)
 
             config = controller.LoadMotorConfiguration(
-            serial_num, DeviceConfiguration.DeviceSettingsUseOptionType.UseFileSettings)
+                serial_num, DeviceConfiguration.DeviceSettingsUseOptionType.UseFileSettings)
             config.DeviceSettingsName = device_settings_name
             config.UpdateCurrentConfiguration()
             controller.SetSettings(controller.MotorDeviceSettings, True, False)
 
         return controller
 
-    def setController(self,step_size : int=  360 ,max_velocity : int=20 ) -> None:
-        # jog_params = self.controller.GetJogParams()
-        # jog_params.SetpSize = Decimal(45)
-        # jog_params.MaxVelocity = Decimal(max_velocity)
-        # jog_params.JogMode = JogParametersBase.JogModes.SingleStep
-        # self.controller.SetJogParams(jog_params)
+    def setController(self, step_size: int = 360, max_velocity: int = 20) -> None:
         self.controller.SetJogStepSize(Decimal(step_size))
-        self.controller.SetJogVelocityParams(Decimal(15),Decimal(20))
+        self.controller.SetJogVelocityParams(Decimal(15), Decimal(20))
         print(f'Step Size : {self.controller.GetJogStepSize()}')
-        print(f'Max Velocity : {self.controller.GetVelocityParams().MaxVelocity}')
-        print(f'Min Velocity : {self.controller.GetVelocityParams().MinVelocity}')
+        print(
+            f'Max Velocity : {self.controller.GetVelocityParams().MaxVelocity}')
+        print(
+            f'Min Velocity : {self.controller.GetVelocityParams().MinVelocity}')
 
-    def goHome(self,time_out :int = 60000) -> None:
-        print('Homing Moter...')
-        self.controller.Home(time_out)
-
-    def move(self,pos, time_out :int = 60000) -> None:
-        print('Moving Moter...')
-        self.controller.MoveTo(Decimal(pos),time_out)
-
-    def moveForward(self,time_out :int = 60000) -> None:
+    def moveForward(self, time_out: int = 60000) -> None:
         print('Moving Moter...')
         self.controller.MoveJog(MotorDirection.Forward, time_out)
 
-    def isControllerBusy(self):
-        return self.controller.IsDeviceBusy
+    def goHome(self, time_out: int = 60000) -> None:
+        print('Homing Moter...')
+        self.controller.Home(time_out)
 
-    def position(self) -> Decimal:
+    def get_position(self) -> Decimal:
         pos = self.controller.Position
         return pos
+
+    def move(self, pos, time_out: int = 60000) -> None:
+        print('Moving Moter...')
+        self.controller.MoveTo(Decimal(pos), time_out)
+
+    def isControllerBusy(self):
+        return self.controller.IsDeviceBusy
 
     def close(self) -> None:
         self.controller.StopPolling()
         self.controller.Disconnect(False)
 
+
 if __name__ == "__main__":
     # main()
     kdc = KDC(serial_num='27257082')
     kdc.setController()
-    start = datetime.datetime.now()
-    kdc.move(time_out=60000)
-    end = datetime.datetime.now()
-    print(end -start)
-    kdc.position()   
-    kdc.close() 
+    kdc.move(90)
+    # kdc.goHome()
+    kdc.close()
