@@ -1,3 +1,26 @@
-from ctypes import cdll
+import numpy as np
+import matplotlib.pyplot as plt
+import os
+import pandas as pd
 
-print(1)
+
+def main():
+    ''''''
+    print(abspath)
+    result_dir = abspath + \
+            f'\\result\\650nm\\'
+
+    dirListing = os.listdir(result_dir)
+    result_len = len(dirListing)
+
+    for i in dirListing:
+        df = pd.read_csv(result_dir+i)
+        T = df['Theta'][2:]
+        P = df['Power'][2:]
+        plt.plot(T, P)
+        plt.show()
+
+if __name__ == '__main__':
+
+    abspath = os.path.dirname(os.path.abspath(__file__))
+    main()

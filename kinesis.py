@@ -91,6 +91,10 @@ if __name__ == "__main__":
     # main()
     kdc = KDC(serial_num='27257082')
     kdc.setController()
-    kdc.move(90)
+    kdc.goHome()
+    for i in range(50):
+        kdc.moveForward()
+        time.sleep(1)
     # kdc.goHome()
+    # kdc.move(90)
     kdc.close()

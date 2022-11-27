@@ -87,8 +87,8 @@ def main(wL: str, A: str, num: int = 1) -> None:
         kdc.moveForward(time_out=0)
         time.sleep(.25)
 
-        Theta = ['theta', '']
-        Power = ["mW", f'{A}']
+        Theta = ['theta', '-']
+        Power = ["W", f'{A}']
         while kdc.isControllerBusy():
             newport.write(command="SP")
             power = float(newport.read().lstrip('*'))
