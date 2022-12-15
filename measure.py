@@ -1,5 +1,6 @@
 from rs232 import RS_232
 from kinesis import KDC
+from origin import OriginPy
 import time
 import pandas as pd
 import os
@@ -77,22 +78,25 @@ def main(wL: str, A: str, num: int = 1) -> None:
     kdc = KDC(serial_num='27257082')
     kdc.setController(step_size=360)
 
+    op = OriginPy()
     # Measure-----------------------------
     print('Measure Start')
     start = time.time()
     createFolder(abspath, f'\\result\\{wL}nm\\{A}')
+    createFolder(abspath, f'\\result_img\\{wL}nm\\{A}')
     for i in range(num):
         time.sleep(.25)
 
         kdc.moveForward(time_out=0)
         time.sleep(.25)
 
-        Theta = ['theta', '-']
-        Power = ["W", f'{A}']
+        Theta = []
+        Power = []
         while kdc.isControllerBusy():
             newport.write(command="SP")
             power = float(newport.read().lstrip('*'))
-            pos = kdc.get_position()
+            posKDC = float(str(kdc.get_position()))
+            pos = posKDC - 9.45 if posKDC -9.45 > 0 else 351+posKDC
             print(f'Moter Position : {pos} , Power : {power}')
             Theta.append(pos)
             Power.append(power)
@@ -102,6 +106,10 @@ def main(wL: str, A: str, num: int = 1) -> None:
 
         result_dir = abspath + \
             f'\\result\\{wL}nm\\{A}'
+        
+        result_img_dir = abspath + \
+            f'\\resul_img\\{wL}nm\\{A}'
+        
 
         dirListing = os.listdir(result_dir)
         result_len = len(dirListing)
@@ -109,7 +117,14 @@ def main(wL: str, A: str, num: int = 1) -> None:
         file_name = result_dir + \
             f'\\{wL}_{A}_{str(result_len+1).zfill(3)}.csv'
 
+        img_file_name =result_img_dir + \
+            f'\\{wL}_{A}_{str(result_len+1).zfill(3)}.png'
+
+
         df.to_csv(file_name, index=False, header=True)
+        op.draw_graph(Theta,Power,img_file_name)
+        
+        time.sleep(0.2)
 
     kdc.close()
     newport.close()
@@ -117,12 +132,9 @@ def main(wL: str, A: str, num: int = 1) -> None:
     print('Measure End')
     print(f'Time : {end - start} sec')
     print('Device close')
-    # X = [float(i) for i in Theta[2:]]
-    # Y = Power[2:]
-    # plt.axes(polar=True)
-    # plt.plot(X, Y)
+  
 
 
 if __name__ == "__main__":
     abspath = os.path.dirname(os.path.abspath(__file__))
-    main(wL='650', A='', num=1)
+    main(wL='650', A='123', num=1)

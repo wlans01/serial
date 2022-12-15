@@ -47,7 +47,7 @@ if __name__ == "__main__":
     rs.write(f"WL 650")
     res = rs.read()
 
-    rs.write("WN 2")
+    rs.write("WN 3")
     res = rs.read()
 
     # rs.write('SP')

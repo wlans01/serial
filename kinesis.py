@@ -57,6 +57,7 @@ class KDC:
     def setController(self, step_size: int = 360, max_velocity: int = 20) -> None:
         self.controller.SetJogStepSize(Decimal(step_size))
         self.controller.SetJogVelocityParams(Decimal(15), Decimal(20))
+
         print(f'Step Size : {self.controller.GetJogStepSize()}')
         print(
             f'Max Velocity : {self.controller.GetVelocityParams().MaxVelocity}')
@@ -94,7 +95,7 @@ if __name__ == "__main__":
     kdc.goHome()
     for i in range(50):
         kdc.moveForward()
-        time.sleep(1)
+        time.sleep(.1)
     # kdc.goHome()
     # kdc.move(90)
     kdc.close()
