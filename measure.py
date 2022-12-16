@@ -5,7 +5,7 @@ import time
 import pandas as pd
 import os
 import numpy as np
-import matplotlib.pyplot as plt
+import math
 
 
 def createFolder(abspath: str, folder_path: str = 'result\\') -> None:
@@ -77,6 +77,7 @@ def main(wL: str, A: str, num: int = 1) -> None:
     # KDC Settings-------------------------
     kdc = KDC(serial_num='27257082')
     kdc.setController(step_size=360)
+    # kdc.goHome()
 
     op = OriginPy()
     # Measure-----------------------------
@@ -96,7 +97,8 @@ def main(wL: str, A: str, num: int = 1) -> None:
             newport.write(command="SP")
             power = float(newport.read().lstrip('*'))
             posKDC = float(str(kdc.get_position()))
-            pos = posKDC - 9.45 if posKDC -9.45 > 0 else 351+posKDC
+            pos = posKDC - 4 if posKDC -4 > 0 else 356+posKDC
+            # pos = posKDC
             print(f'Moter Position : {pos} , Power : {power}')
             Theta.append(pos)
             Power.append(power)
@@ -104,25 +106,27 @@ def main(wL: str, A: str, num: int = 1) -> None:
         time.sleep(1)
         df = pd.DataFrame({'Theta': Theta, 'Power': Power})
 
+        max_intensity = max(Power)
+
         result_dir = abspath + \
             f'\\result\\{wL}nm\\{A}'
         
         result_img_dir = abspath + \
-            f'\\resul_img\\{wL}nm\\{A}'
+            f'\\result_img\\{wL}nm\\{A}'
         
 
         dirListing = os.listdir(result_dir)
         result_len = len(dirListing)
 
-        file_name = result_dir + \
-            f'\\{wL}_{A}_{str(result_len+1).zfill(3)}.csv'
+        file_name = result_dir + f'\{wL}_{A}_{max_intensity}_{str(result_len+1).zfill(2)}.csv'
+            
 
-        img_file_name =result_img_dir + \
-            f'\\{wL}_{A}_{str(result_len+1).zfill(3)}.png'
+        img_file_name =result_img_dir + f'\{wL}_{A}_{str(result_len+1).zfill(2)}.png'
+            
 
 
         df.to_csv(file_name, index=False, header=True)
-        op.draw_graph(Theta,Power,img_file_name)
+        op.draw_graph(Theta,Power,f'{A}_{str(result_len+1).zfill(2)}',img_file_name)
         
         time.sleep(0.2)
 
@@ -137,4 +141,4 @@ def main(wL: str, A: str, num: int = 1) -> None:
 
 if __name__ == "__main__":
     abspath = os.path.dirname(os.path.abspath(__file__))
-    main(wL='650', A='123', num=1)
+    main(wL='650', A='test', num=1)

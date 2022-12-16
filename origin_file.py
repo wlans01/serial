@@ -1,5 +1,6 @@
 import os
 import originpro as op
+import glob
 import pandas as pd
 
 class OriginPy:
@@ -36,8 +37,22 @@ class OriginPy:
         op.exit()
 
 if __name__ == "__main__":
-    op = OriginPy()
-    xL = [1,2,3,4,5,6,7,8,9,10]
-    yL = [23,45,78,133,178,199,234,278,341,400]
+    opy = OriginPy()
+    abspath_path = os.path.dirname(os.path.abspath(__file__))
+    data_path = 'data'
+    img_path = 'img'
 
-    op.draw_graph(xL,yL,file_name='')
+    file_list = os.listdir(data_path)
+
+    for i in range(len(file_list)):
+        file_path = file_list[i]
+        file_name = os.path.splitext(file_path)[0]
+        data = pd.read_csv(f'{data_path}\{file_path}')
+
+        dirListing = os.listdir(img_path)
+        result_len = len(dirListing)
+
+        result_file_path = f'{abspath_path}\{img_path}\{file_name}.png'
+    
+
+        opy.draw_graph(data['Theta'],data['Power'],f'Slit_V_{str(result_len+1).zfill(2)}',result_file_path)
