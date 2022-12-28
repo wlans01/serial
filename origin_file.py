@@ -48,6 +48,7 @@ if __name__ == "__main__":
         file_path = file_list[i]
         file_name = os.path.splitext(file_path)[0]
         data = pd.read_csv(f'{data_path}\{file_path}')
+        # print(data)
 
         dirListing = os.listdir(img_path)
         result_len = len(dirListing)
